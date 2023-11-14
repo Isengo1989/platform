@@ -2,7 +2,7 @@ name: Generate Release Info
 
 on:
   release:
-    types: [published]
+    #types: [published]
   workflow_dispatch:
 
 jobs:
@@ -38,6 +38,6 @@ jobs:
             AWS_SECRET_ACCESS_KEY: ${{ secrets.RELEASE_INFO_SECRET }}
             AWS_DEFAULT_REGION: eu-west-1
   create-docs-pr:
-    uses: shopware/admin-api-reference/.github/workflows/base_schema.yml@latest
+    uses: Isengo1989/admin-api-reference/.github/workflows/base_schema.yml@latest
     with:
       shopware_version: ${{ github.event.release.tag_name }}
