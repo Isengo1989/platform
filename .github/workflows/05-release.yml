@@ -7,6 +7,7 @@ on:
 
 jobs:
   create-docs-pr:
+    if: "!github.event.release.prerelease"
     uses: Isengo1989/admin-api-reference/.github/workflows/base_schema.yml@main
     with:
       shopware_version: ${{ github.event.release.tag_name }}
