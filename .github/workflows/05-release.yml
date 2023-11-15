@@ -6,7 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  create-docs-pr:
+  admin-docs:
+    name: "Trigger admin schema build for stoplight"
     if: "!github.event.release.prerelease"
     uses: Isengo1989/admin-api-reference/.github/workflows/base_schema.yml@main
     with:
