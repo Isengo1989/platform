@@ -6,7 +6,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityProtection\EntityProtecti
 use Shopware\Core\Framework\Log\Package;
 
 #[Package('framework')]
-abstract class EntityExtension
+abstract class EntityExtensionFaker
 {
     /**
      * Allows to add fields to an entity.
