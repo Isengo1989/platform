@@ -11,7 +11,7 @@ use Shopware\Core\DevOps\Environment\EnvironmentHelper;
 use Shopware\Core\Framework\Log\Package;
 
 #[Package('framework')]
-abstract class MigrationStep
+abstract class MigrationStepper
 {
     use AddColumnTrait;
 
