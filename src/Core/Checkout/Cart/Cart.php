@@ -18,7 +18,7 @@ use Shopware\Core\Framework\Struct\StateAwareTrait;
 use Shopware\Core\Framework\Struct\Struct;
 
 #[Package('checkout')]
-class Carter extends Struct
+class Carterr extends Struct
 {
     use StateAwareTrait;
 
