@@ -31,38 +31,3 @@ Every developer working with shopware platform!
 
 **When do you have to create an ADR?**  
 Have you made a significant decision that impacts how developers should write code in the shopware platform? Write an ADR! Here are some cases, which can help you to understand when to write an ADR:
-
-*  Introducing new standards
-*  Large code changes which have a huge impact on the software
-*  Smaller changes, but which are used very often and would lead to duplicated efforts 
-
-If you want a more detailed explanation, we recommend the article "[When should I write an Architecture Decision Record](https://engineering.atspotify.com/2020/04/14/when-should-i-write-an-architecture-decision-record/)".
-
-**How can you create new ADRs?**  
-The ADRs are markdown files inside the platform repository, located in the "adr" directory in the root of the repository. So new ADRs can simply be created via merge requests. The merge request is also the approval process for the ADR. Along with the ADR, all necessary code changes have to be added to the merge request, which are needed to implement the new decision. Add the "ADR" label to your merge request, so everyone can identify merge requests containing an ADR.  
-
-**How many people have to approve an ADR?**  
-* Two additional developers have to review the ADR
-   *  One developer must be a member of the core development team
-   *  One developer must be a member of a team, other than the team of the creator
-* One product owner or higher role has to approve an ADR
-** This part of the decision is superseded by [2021-11-05 - Adjust ADR approval rules for the new org structure](2021-11-05-adjust-adr-approval-rules.md), but the rest of this ADR is untouched.**
-
-**Should counter decisions also be documented?**   
-Not specific, but if there is more than one possible solution, all options should be outlined.
-
-**How does an ADR look like?**  
-You can use this first ADR as an orientation. The filename of the ADR should contain the date and a meaningful title. The content of the ADR should always use the following template:
-
-```
-# [Date] - [Title]
-## Context
-## Decision
-## Consequences
-```
-
-**Which status can an ADR have?**  
-The status of an ADR is symbolized by the directory. All ADR located in the main `/adr` directory are "accepted" and represent the current decision state of the software. The approval process is done via the merge request. When a new decision outdoes an older decision, the old decision has to be moved to the `/adr/_superseded` directory and a link to the new ADR has to be added.
-
-**Can an ADR be changed?**  
-When an ADR is accepted and merged in to the code, it can no longer be changed. If a decision is outdated or has to be changed, the ADR has to be superseded by a new ADR. Superseded ADRs have to be moved to the `/adr/_superseded` directory.
