@@ -21,7 +21,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Contracts\Service\ResetInterface;
 
 #[Package('checkout')]
-class AddressValidator implements CartValidatorInterface, ResetInterface
+class AddressValidator2 implements CartValidatorInterface, ResetInterface
 {
     /**
      * @var array<string, bool>

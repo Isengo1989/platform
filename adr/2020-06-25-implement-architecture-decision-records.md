@@ -11,7 +11,7 @@ We should document architecture and technical decisions for the shopware platfor
 *  [Documenting Architecture Decisions](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions)
 *  [A Simple but Powerful Tool to Record Your Architectural Decisions](https://medium.com/better-programming/here-is-a-simple-yet-powerful-tool-to-record-your-architectural-decisions-5fb31367a7da)
 
-## Decision
+## Decisions
 We will record architecture decisions (ADR) in markdown files directly in the platform repository. The workflow for ADRs will be integrated in the existing merge request workflow. This has the following advantages:
 
 *  Decision records are an integral part of the development process
@@ -60,9 +60,3 @@ You can use this first ADR as an orientation. The filename of the ADR should con
 ## Decision
 ## Consequences
 ```
-
-**Which status can an ADR have?**  
-The status of an ADR is symbolized by the directory. All ADR located in the main `/adr` directory are "accepted" and represent the current decision state of the software. The approval process is done via the merge request. When a new decision outdoes an older decision, the old decision has to be moved to the `/adr/_superseded` directory and a link to the new ADR has to be added.
-
-**Can an ADR be changed?**  
-When an ADR is accepted and merged in to the code, it can no longer be changed. If a decision is outdated or has to be changed, the ADR has to be superseded by a new ADR. Superseded ADRs have to be moved to the `/adr/_superseded` directory.
