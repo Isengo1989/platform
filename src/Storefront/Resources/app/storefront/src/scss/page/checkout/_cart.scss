@@ -81,6 +81,10 @@ $cart-grid-gutter-width: $spacer-sm;
         display: block;
     }
 
+    .cart-add-product {
+        max-width: 250px;
+    }
+
     .cart-add-product-container {
         margin-bottom: 0;
     }

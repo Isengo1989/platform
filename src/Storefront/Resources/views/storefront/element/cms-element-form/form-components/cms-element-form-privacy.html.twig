@@ -1,7 +1,42 @@
-{# @deprecated tag:v6.8.0 - `cms-element-form-privacy.html.twig` will be removed, use block `component_privacy_notice` instead #}
 {% block cms_form_privacy_opt_in %}
-    {# @deprecated tag:v6.8.0 - `cms-element-form-privacy.html.twig` will be removed, use block `component_privacy_notice` instead #}
-    {% block cms_form_privacy_opt_in_title %}{% endblock %}
+    {% set identifierTemplate = 'form-privacy-opt-in-%s' %}
+    {% set generalPrivacyNoticeSnippet = 'general.privacyNoticeTextModal' %}
+    {% set contactPrivacyNoticeSnippet = 'contact.privacyNoticeTextModal' %}
+    {% set cmsPath = 'frontend.cms.page' %}
 
-    {% sw_include '@Storefront/storefront/component/privacy-notice.html.twig' %}
+    {# The previous url can be set if the privacy notice link is opened from within an already opened AjaxModal. #}
+    {# The url is then used to render a back button to return to the previous modal. #}
+    {% if prevUrl is not defined %}
+        {% set prevUrl = '' %}
+    {% endif %}
+
+    {% if requiresTermsOfService is not defined %}
+        {% set requiresTermsOfService = true %}
+    {% endif %}
+
+    {% block cms_form_privacy_opt_in_title %}
+        <div>{{- 'general.privacyTitle'|trans -}} {{- 'general.required'|trans -}}</div>
+    {% endblock %}
+
+    {% if requiresTermsOfService == true %}
+        {% set dataProtectionLabel = generalPrivacyNoticeSnippet|trans({
+            '%privacyModalTagOpen%': '<button type="button" class="btn btn-link-inline" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.privacyPage') }) ~ '">',
+            '%privacyModalTagClose%': '</button>',
+            '%tosModalTagOpen%': '<button type="button" class="btn btn-link-inline" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.tosPage') }) ~ '">',
+            '%tosModalTagClose%': '</button>',
+        })|raw %}
+    {% else %}
+        {% set dataProtectionLabel = contactPrivacyNoticeSnippet|trans({
+            '%privacyModalTagOpen%': '<button type="button" class="btn btn-link-inline" data-ajax-modal="true" data-url="' ~ path(cmsPath, { id: config('core.basicInformation.privacyPage') }) ~ '" data-prev-url="' ~ prevUrl ~ '">',
+            '%privacyModalTagClose%': '</button>',
+            '%prevUrl%': prevUrl
+        })|raw %}
+    {% endif %}
+
+    {% sw_include '@Storefront/storefront/component/form/form-checkbox.html.twig' with {
+        label: dataProtectionLabel,
+        id: formPrefix ~ '-' ~ identifierTemplate|format(_key),
+        name: 'privacy',
+        validationRules: 'required',
+    } %}
 {% endblock %}

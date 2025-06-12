@@ -1,8 +1,7 @@
 import { loadDIVE } from 'src/plugin/spatial/utils/spatial-dive-load-util';
 
 jest.mock('@shopware-ag/dive', () => ({ DIVE: {} }));
-jest.mock('@shopware-ag/dive/state', () => ({ State: {} }));
-jest.mock('@shopware-ag/dive/ar', () => ({ ARSystem: {} }));
+jest.mock('@shopware-ag/dive/modules/State', () => ({ State: {} }));
 
 /**
  * @package innovation
@@ -11,7 +10,7 @@ describe('loadDIVE', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         window.DIVEClass = undefined;
-        window.DIVEARPlugin = undefined;
+        window.ARSystem = undefined;
         window.loadDiveUtil = undefined;
     });
 
@@ -21,13 +20,13 @@ describe('loadDIVE', () => {
 
     test('should load dive', async () => {
         expect(window.DIVEClass).toBeUndefined();
-        expect(window.DIVEARPlugin).toBeUndefined();
+        expect(window.ARSystem).toBeUndefined();
         expect(window.loadDiveUtil).toBeUndefined();
 
         await loadDIVE();
 
         expect(typeof window.DIVEClass).toBe('object');
-        expect(typeof window.DIVEARPlugin).toBe('object');
+        expect(typeof window.ARSystem).toBe('object');
         expect(typeof window.loadDiveUtil.promise).toBe('object');
     });
 
@@ -39,12 +38,12 @@ describe('loadDIVE', () => {
         expect(window.DIVEClass).toBe('dive');
     });
 
-    test('should not load dive if ARPlugin is already loaded', async () => {
-        window.DIVEARPlugin = 'arPlugin';
+    test('should not load dive if ARSystem is already loaded', async () => {
+        window.ARSystem = 'arSystem';
 
         await loadDIVE();
 
-        expect(window.DIVEARPlugin).toBe('arPlugin');
+        expect(window.ARSystem).toBe('arSystem');
     });
 
     test('should not run import when dive is already loading', async () => {

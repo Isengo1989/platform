@@ -67,11 +67,6 @@
     .download-item:first-of-type {
         padding-left: 0;
     }
-
-    .card-title,
-    .card-content {
-        padding-left: 0;
-    }
 }
 
 @include media-breakpoint-down(lg) {
@@ -132,8 +127,8 @@
 
 .order-item-detail-footer {
     padding: $spacer;
-    padding-left: $order-grid-gutter-width;
-    padding-right: $order-grid-gutter-width;
+    padding-left: $order-grid-gutter-width / 2;
+    padding-right: $order-grid-gutter-width / 2;
 
     dl {
         dt.col,
