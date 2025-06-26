@@ -290,7 +290,7 @@
         "stylelint:storefront": "Code Style checks for all Storefront SCSS files",
         "stylelint:storefront:fix": "Code Style checks for all Storefront SCSS files and fixes them if possible",
         "watch:admin": "Enables hot module reloading for the Admin",
-        "watch:storefront": "Enables hot module reloading for the Storefront"
+        "watch:frontend": "Enables hot module reloading for the Storefront"
     },
     "scripts": {
         "admin:code-mods": "@npm:admin run code-mods --",
@@ -462,7 +462,7 @@
             "@admin:generate-entity-schema-types",
             "@npm:admin run dev"
         ],
-        "watch:storefront": [
+        "watch:frontend": [
             "Composer\\Config::disableProcessTimeout",
             "@php bin/console bundle:dump",
             "@php bin/console feature:dump",
