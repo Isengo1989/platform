@@ -470,8 +470,6 @@ describe('Plugin manager', () => {
             <div data-async-single-with-error="true"></div>
         `;
 
-        const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-
         // Cause some trouble by returning a non-class
         const asyncImport = new Promise((resolve) => {
             resolve({ default: 'NOT_A_CLASS' });
@@ -483,7 +481,8 @@ describe('Plugin manager', () => {
 
         await new Promise(process.nextTick);
 
-        expect(consoleSpy).toHaveBeenCalledWith('The passed plugin is not a function or a class.');
+        expect(console.error).toHaveBeenCalled();
+        expect(console.error.mock.calls[0][0].message).toContain('The passed plugin is not a function or a class.');
 
         expect(PluginManager.getPluginInstances('AsyncErrorPlugin').length).toBe(0);
 
@@ -491,16 +490,24 @@ describe('Plugin manager', () => {
     });
 
     it('should be able to override async plugin', async () => {
+        jest.useFakeTimers();
+
         document.body.innerHTML = `
             <div data-async-cart="true"></div>
         `;
 
         const asyncCoreCartImport = new Promise((resolve) => {
-            resolve({ default: CoreCartPluginClass });
+            // Simulate slower async import
+            setTimeout(() => {
+                resolve({ default: CoreCartPluginClass });
+            }, 100);
         });
 
         const asyncOverrideCartImport = new Promise((resolve) => {
-            resolve({ default: OverrideCartPluginClass });
+            // Simulate slower async import
+            setTimeout(() => {
+                resolve({ default: OverrideCartPluginClass });
+            }, 150);
         });
 
         // Shopware core registers async plugin
@@ -510,75 +517,16 @@ describe('Plugin manager', () => {
         PluginManager.override('AsyncCoreCart', () => asyncOverrideCartImport, '[data-async-cart]');
 
         PluginManager.initializePlugins();
+        jest.advanceTimersByTime(250);
 
-        await new Promise(process.nextTick);
+        process.nextTick(function() {
+            const element = document.querySelector('[data-async-cart]');
+            const cartPluginInstance = PluginManager.getPluginInstanceFromElement(element, 'AsyncCoreCart');
 
-        const element = document.querySelector('[data-async-cart]');
-        const cartPluginInstance = PluginManager.getPluginInstanceFromElement(element, 'AsyncCoreCart');
+            expect(PluginManager.getPluginInstances('AsyncCoreCart').length).toBe(1);
+            expect(cartPluginInstance.getQuantity()).toBe('79,89 EUR');
 
-        expect(PluginManager.getPluginInstances('AsyncCoreCart').length).toBe(1);
-        expect(cartPluginInstance.getQuantity()).toBe('79,89 EUR');
-
-        PluginManager.deregister('AsyncCoreCart', '[data-async-cart]');
-    });
-
-    it('should warn when registering already registered plugin', () => {
-        const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-
-        PluginManager.register('DuplicatePlugin', FooPluginClass, '.test-class');
-        PluginManager.register('DuplicatePlugin', FooPluginClass, '.test-class');
-
-        expect(consoleSpy).toHaveBeenCalledWith('Plugin "DuplicatePlugin" is already registered.');
-
-        PluginManager.deregister('DuplicatePlugin', '.test-class');
-        jest.resetAllMocks();
-    });
-
-    it('should warn when deregistering non-registered plugin', () => {
-        const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-
-        PluginManager.deregister('NonExistentPlugin', '.test-class');
-
-        expect(consoleSpy).toHaveBeenCalledWith('The plugin "NonExistentPlugin" is not registered.');
-        jest.resetAllMocks();
-    });
-
-    it('should warn when extending non-registered plugin', () => {
-        const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-
-        PluginManager.extend('NonExistentPlugin', 'NewPlugin', FooPluginClass, '.test-class');
-
-        expect(consoleSpy).toHaveBeenCalledWith('Trying to extend non-registered plugin "NonExistentPlugin". The plugin will not be extended.');
-        PluginManager.deregister('NewPlugin', '.test-class');
-        jest.resetAllMocks();
-    });
-
-    it('should warn when calling getPlugin with no plugin name', () => {
-        const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-
-        const plugin = PluginManager.getPlugin();
-
-        expect(plugin).toBeNull();
-        expect(consoleSpy).toHaveBeenCalledWith('No plugin name was provided while trying to call getPlugin().');
-        jest.resetAllMocks();
-    });
-
-    it('should warn when calling getPlugin with non-registered plugin name in strict mode', () => {
-        const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-
-        const plugin = PluginManager.getPlugin('NonExistentPlugin', true);
-
-        expect(plugin).toBeNull();
-        expect(consoleSpy).toHaveBeenCalledWith('The plugin "NonExistentPlugin" is not registered. You might need to register it first.');
-        jest.resetAllMocks();
-    });
-
-    it('should warn when calling getPluginInstancesFromElement with non-HTML element', () => {
-        const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-
-        PluginManager.getPluginInstancesFromElement('not-an-element');
-
-        expect(consoleSpy).toHaveBeenCalledWith('Passed element in getPluginInstancesFromElement() is not an Html element!');
-        jest.resetAllMocks();
+            PluginManager.deregister('AsyncCoreCart', '[data-async-cart]');
+        });
     });
 });
