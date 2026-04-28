@@ -3,7 +3,6 @@
 namespace Shopware\Core\Checkout\Payment\Cart\PaymentHandler;
 
 use Doctrine\DBAL\Connection;
-use Shopware\Core\Framework\App\Payment\Handler\AppPaymentHandler;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Symfony\Contracts\Service\ServiceProviderInterface;
@@ -33,34 +32,18 @@ class PaymentHandlerRegistry
 
     public function getPaymentMethodHandler(string $paymentMethodId): ?AbstractPaymentHandler
     {
-        $result = $this->connection->createQueryBuilder()
-            ->select('
-                payment_method.handler_identifier,
-                app_payment_method.id as app_payment_method_id
-            ')
+        $handlerIdentifier = $this->connection->createQueryBuilder()
+            ->select('payment_method.handler_identifier')
             ->from('payment_method')
-            ->leftJoin(
-                'payment_method',
-                'app_payment_method',
-                'app_payment_method',
-                'payment_method.id = app_payment_method.payment_method_id'
-            )
             ->andWhere('payment_method.id = :paymentMethodId')
             ->setParameter('paymentMethodId', Uuid::fromHexToBytes($paymentMethodId))
             ->executeQuery()
-            ->fetchAssociative();
+            ->fetchOne();
 
-        if (!$result || !\array_key_exists('handler_identifier', $result)) {
+        if ($handlerIdentifier === false) {
             return null;
         }
 
-        // app payment method is set: we need to resolve an app handler
-        if (isset($result['app_payment_method_id'])) {
-            return $this->handlers[AppPaymentHandler::class] ?? null;
-        }
-
-        $handlerIdentifier = $result['handler_identifier'];
-
-        return $this->handlers[$handlerIdentifier] ?? null;
+        return $this->handlers[(string) $handlerIdentifier] ?? null;
     }
 }

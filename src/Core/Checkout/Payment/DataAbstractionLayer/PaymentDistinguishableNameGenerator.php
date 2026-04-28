@@ -3,7 +3,6 @@
 namespace Shopware\Core\Checkout\Payment\DataAbstractionLayer;
 
 use Shopware\Core\Checkout\Payment\PaymentMethodCollection;
-use Shopware\Core\Framework\App\AppEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -41,8 +40,7 @@ class PaymentDistinguishableNameGenerator
         $criteria = new Criteria();
         $criteria
             ->addAssociation('translations')
-            ->addAssociation('plugin.translations')
-            ->addAssociation('appPaymentMethod.app.translations');
+            ->addAssociation('plugin.translations');
 
         return $this->paymentMethodRepository->search($criteria, $context)->getEntities();
     }
@@ -54,8 +52,8 @@ class PaymentDistinguishableNameGenerator
     {
         $upsertablePayments = [];
         foreach ($payments as $payment) {
-            $pluginOrAppEntity = $payment->getPlugin() ?? $payment->getAppPaymentMethod()?->getApp();
-            if ($pluginOrAppEntity === null || $payment->getTranslations() === null) {
+            $plugin = $payment->getPlugin();
+            if ($plugin === null || $payment->getTranslations() === null) {
                 continue;
             }
 
@@ -64,7 +62,7 @@ class PaymentDistinguishableNameGenerator
                 $languageId = $translation->getLanguageId();
 
                 $distinguishableNames[$languageId] = $this->generatePaymentName(
-                    $pluginOrAppEntity,
+                    $plugin,
                     $languageId,
                     $translation->getName() ?? $payment->getTranslation('name'),
                 );
@@ -85,7 +83,7 @@ class PaymentDistinguishableNameGenerator
     }
 
     private function generatePaymentName(
-        AppEntity|PluginEntity $entity,
+        PluginEntity $entity,
         string $languageId,
         string $paymentName,
     ): ?string {

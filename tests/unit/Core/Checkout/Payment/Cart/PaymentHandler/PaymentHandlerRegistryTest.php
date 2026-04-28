@@ -43,7 +43,6 @@ class PaymentHandlerRegistryTest extends TestCase
         $qb = $this->createMock(QueryBuilder::class);
         $qb->method('select')->willReturnSelf();
         $qb->method('from')->willReturnSelf();
-        $qb->method('leftJoin')->willReturnSelf();
         $qb->method('andWhere')->willReturnSelf();
 
         $qb
@@ -56,12 +55,12 @@ class PaymentHandlerRegistryTest extends TestCase
 
                     $result = $this->createMock(Result::class);
                     $result
-                        ->method('fetchAssociative')
-                        ->willReturn(['handler_identifier' => $handler::class]);
+                        ->method('fetchOne')
+                        ->willReturn($handler::class);
                 } else {
                     $result = $this->createMock(Result::class);
                     $result
-                        ->method('fetchAssociative')
+                        ->method('fetchOne')
                         ->willReturn(false);
                 }
 
@@ -128,27 +127,13 @@ class PaymentHandlerRegistryTest extends TestCase
         $qb
             ->expects($this->once())
             ->method('select')
-            ->with('
-                payment_method.handler_identifier,
-                app_payment_method.id as app_payment_method_id
-            ')
+            ->with('payment_method.handler_identifier')
             ->willReturnSelf();
 
         $qb
             ->expects($this->once())
             ->method('from')
             ->with('payment_method')
-            ->willReturnSelf();
-
-        $qb
-            ->expects($this->once())
-            ->method('leftJoin')
-            ->with(
-                'payment_method',
-                'app_payment_method',
-                'app_payment_method',
-                'payment_method.id = app_payment_method.payment_method_id'
-            )
             ->willReturnSelf();
 
         $qb

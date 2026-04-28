@@ -11,7 +11,6 @@ use Shopware\Core\Framework\App\Manifest\Xml\Cookie\Cookies;
 use Shopware\Core\Framework\App\Manifest\Xml\CustomField\CustomFields;
 use Shopware\Core\Framework\App\Manifest\Xml\Gateway\Gateways;
 use Shopware\Core\Framework\App\Manifest\Xml\Meta\Metadata;
-use Shopware\Core\Framework\App\Manifest\Xml\PaymentMethod\Payments;
 use Shopware\Core\Framework\App\Manifest\Xml\Permission\Permissions;
 use Shopware\Core\Framework\App\Manifest\Xml\RuleCondition\RuleConditions;
 use Shopware\Core\Framework\App\Manifest\Xml\Setup\Setup;
@@ -56,7 +55,6 @@ class Manifest
         private readonly ?CustomFields $customFields,
         private readonly ?Webhooks $webhooks,
         private readonly ?Cookies $cookies,
-        private readonly ?Payments $payments,
         private readonly ?RuleConditions $ruleConditions,
         private readonly ?Storefront $storefront,
         private readonly ?Tax $tax,
@@ -178,11 +176,6 @@ class Manifest
         return $this->cookies;
     }
 
-    public function getPayments(): ?Payments
-    {
-        return $this->payments;
-    }
-
     public function getRuleConditions(): ?RuleConditions
     {
         return $this->ruleConditions;
@@ -221,10 +214,6 @@ class Manifest
 
         if ($this->admin) {
             $urls = \array_merge($urls, $this->admin->getUrls());
-        }
-
-        if ($this->payments) {
-            $urls = \array_merge($urls, $this->payments->getUrls());
         }
 
         if ($this->tax) {
@@ -305,8 +294,6 @@ class Manifest
             $webhooks = $webhooks === null ? null : Webhooks::fromXml($webhooks);
             $cookies = $doc->getElementsByTagName('cookies')->item(0);
             $cookies = $cookies === null ? null : Cookies::fromXml($cookies);
-            $payments = $doc->getElementsByTagName('payments')->item(0);
-            $payments = $payments === null ? null : Payments::fromXml($payments);
             $ruleConditions = $doc->getElementsByTagName('rule-conditions')->item(0);
             $ruleConditions = $ruleConditions === null ? null : RuleConditions::fromXml($ruleConditions);
             $storefront = $doc->getElementsByTagName('storefront')->item(0);
@@ -333,7 +320,6 @@ class Manifest
             $customFields,
             $webhooks,
             $cookies,
-            $payments,
             $ruleConditions,
             $storefront,
             $tax,

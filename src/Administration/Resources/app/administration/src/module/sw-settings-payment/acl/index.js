@@ -18,7 +18,6 @@ Shopware.Service('privileges').addPrivilegeMappingEntry({
                 'custom_field:read',
                 'custom_field_set_relation:read',
                 'app:read',
-                'app_payment_method:read',
             ],
             dependencies: [],
         },

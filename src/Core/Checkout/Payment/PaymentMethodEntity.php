@@ -7,7 +7,6 @@ use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionColl
 use Shopware\Core\Checkout\Payment\Aggregate\PaymentMethodTranslation\PaymentMethodTranslationCollection;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Rule\RuleEntity;
-use Shopware\Core\Framework\App\Aggregate\AppPaymentMethod\AppPaymentMethodEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\Contract\IdAware;
 use Shopware\Core\Framework\DataAbstractionLayer\Contract\RuleIdAware;
 use Shopware\Core\Framework\DataAbstractionLayer\Entity;
@@ -64,8 +63,6 @@ class PaymentMethodEntity extends Entity implements IdAware, RuleIdAware
     protected ?string $shortName = null;
 
     protected string $technicalName;
-
-    protected ?AppPaymentMethodEntity $appPaymentMethod = null;
 
     public function getPluginId(): ?string
     {
@@ -275,15 +272,5 @@ class PaymentMethodEntity extends Entity implements IdAware, RuleIdAware
     public function setTechnicalName(string $technicalName): void
     {
         $this->technicalName = $technicalName;
-    }
-
-    public function getAppPaymentMethod(): ?AppPaymentMethodEntity
-    {
-        return $this->appPaymentMethod;
-    }
-
-    public function setAppPaymentMethod(?AppPaymentMethodEntity $appPaymentMethod): void
-    {
-        $this->appPaymentMethod = $appPaymentMethod;
     }
 }

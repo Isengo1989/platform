@@ -139,7 +139,7 @@ export default {
         },
 
         technicalNameIsProvided() {
-            return !!this.paymentMethod?.pluginId || !!this.paymentMethod?.appPaymentMethod?.id;
+            return !!this.paymentMethod?.pluginId;
         },
 
         ...mapPropertyErrors('paymentMethod', [

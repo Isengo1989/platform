@@ -105,12 +105,6 @@
             <tag name="shopware.app_lifecycle.persister" priority="-200"/>
         </service>
 
-        <service id="Shopware\Core\Framework\App\Lifecycle\Persister\PaymentMethodPersister">
-            <argument type="service" id="payment_method.repository"/>
-            <argument type="service" id="Shopware\Core\Content\Media\MediaService"/>
-            <tag name="shopware.app_lifecycle.persister" priority="-300"/>
-        </service>
-
         <service id="Shopware\Core\Framework\App\Lifecycle\Persister\TaxProviderPersister">
             <argument type="service" id="tax_provider.repository"/>
             <tag name="shopware.app_lifecycle.persister" priority="-400"/>
@@ -189,7 +183,6 @@
             <argument type="service" id="Shopware\Core\Framework\App\ActiveAppsLoader"/>
             <argument type="service" id="Shopware\Core\Framework\App\Template\TemplateStateService"/>
             <argument type="service" id="Shopware\Core\Framework\App\Lifecycle\Persister\ScriptPersister"/>
-            <argument type="service" id="Shopware\Core\Framework\App\Payment\PaymentMethodStateService"/>
             <argument type="service" id="Shopware\Core\Framework\Script\Execution\ScriptExecutor"/>
             <argument type="service" id="Shopware\Core\Framework\App\Lifecycle\Persister\RuleConditionPersister"/>
             <argument type="service" id="Shopware\Core\Framework\App\Lifecycle\Persister\FlowEventPersister"/>
@@ -216,15 +209,6 @@
         <service id="Shopware\Core\Framework\App\Template\TemplateStateService" public="true">
             <argument type="service" id="app_template.repository"/>
             <argument type="service" id="Shopware\Core\Framework\Adapter\Cache\CacheClearer"/>
-        </service>
-
-        <service id="Shopware\Core\Framework\App\Payment\PaymentMethodStateService">
-            <argument type="service" id="payment_method.repository"/>
-        </service>
-
-        <service id="Shopware\Core\Framework\App\Payment\Payload\PaymentPayloadService">
-            <argument type="service" id="Shopware\Core\Framework\App\Payload\AppPayloadServiceHelper"/>
-            <argument type="service" id="shopware.app_system.guzzle"/>
         </service>
 
         <service id="Shopware\Core\Framework\App\TaxProvider\Payload\TaxProviderPayloadService">
@@ -266,16 +250,6 @@
         <service id="Shopware\Core\Framework\App\Cookie\AppCookieCollectListener">
             <argument type="service" id="app.repository"/>
             <tag name="kernel.event_listener"/>
-        </service>
-
-        <service id="Shopware\Core\Framework\App\Payment\Handler\AppPaymentHandler">
-            <argument type="service" id="Shopware\Core\System\StateMachine\StateMachineRegistry"/>
-            <argument type="service" id="Shopware\Core\Framework\App\Payment\Payload\PaymentPayloadService"/>
-            <argument type="service" id="order_transaction_capture_refund.repository"/>
-            <argument type="service" id="order_transaction.repository"/>
-            <argument type="service" id="app.repository"/>
-            <argument type="service" id="Doctrine\DBAL\Connection"/>
-            <tag name="shopware.payment.method"/>
         </service>
 
         <service id="Shopware\Core\Framework\App\Lifecycle\Registration\AppRegistrationService">
@@ -627,10 +601,6 @@
         </service>
 
         <service id="Shopware\Core\Framework\App\Template\TemplateDefinition">
-            <tag name="shopware.entity.definition"/>
-        </service>
-
-        <service id="Shopware\Core\Framework\App\Aggregate\AppPaymentMethod\AppPaymentMethodDefinition">
             <tag name="shopware.entity.definition"/>
         </service>
 

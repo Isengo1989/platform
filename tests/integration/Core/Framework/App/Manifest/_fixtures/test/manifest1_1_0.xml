@@ -111,22 +111,4 @@
             </entries>
         </group>
     </cookies>
-    <payments>
-        <payment-method>
-            <identifier>myMethod</identifier>
-            <name>The app payment method</name>
-            <name lang="de-DE">Die App Zahlungsmethode</name>
-            <description>This is a description</description>
-            <description lang="de-DE">Die Zahlungsmethoden-Beschreibung</description>
-            <pay-url>https://payment.app/payment/process</pay-url>
-            <finalize-url>https://payment.app/payment/finalize</finalize-url>
-            <validate-url>https://payment.app/payment/validate</validate-url>
-            <icon>Resources/payment.png</icon>
-        </payment-method>
-        <payment-method>
-            <identifier>anotherMethod</identifier>
-            <name>Another app payment method</name>
-            <description>This is another description</description>
-        </payment-method>
-    </payments>
 </manifest>

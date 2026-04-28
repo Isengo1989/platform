@@ -154,7 +154,6 @@ class DefinitionValidator
         'tax_rule_type',
         'snippet_set',
         'document_type',
-        'app_payment_method',
     ];
 
     /**

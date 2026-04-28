@@ -99,7 +99,7 @@ class CheckoutGatewayRouteTest extends TestCase
         $paymentMethodRoute
             ->expects($this->once())
             ->method('load')
-            ->with($request, $context, static::equalTo((new Criteria())->addAssociation('appPaymentMethod.app')))
+            ->with($request, $context, static::equalTo(new Criteria()))
             ->willReturn($paymentMethods);
 
         $shippingMethodRoute = $this->createMock(AbstractShippingMethodRoute::class);
@@ -184,7 +184,7 @@ class CheckoutGatewayRouteTest extends TestCase
         $paymentMethodRoute
             ->expects($this->once())
             ->method('load')
-            ->with($request, $context, static::equalTo((new Criteria())->addAssociation('appPaymentMethod.app')))
+            ->with($request, $context, static::equalTo(new Criteria()))
             ->willReturn($paymentMethods);
 
         $shippingMethodRoute = $this->createMock(AbstractShippingMethodRoute::class);

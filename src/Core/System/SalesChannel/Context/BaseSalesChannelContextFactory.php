@@ -193,7 +193,6 @@ class BaseSalesChannelContextFactory extends AbstractBaseSalesChannelContextFact
 
         $criteria = new Criteria([$id]);
         $criteria->addAssociation('media');
-        $criteria->addAssociation('appPaymentMethod');
         $criteria->setTitle('base-context-factory::payment-method');
 
         $paymentMethod = $this->paymentMethodRepository
