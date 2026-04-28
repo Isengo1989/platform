@@ -616,10 +616,6 @@ class AppLifecycle extends AbstractAppLifecycle
             $usedFeatures[] = 'Admin Modules';
         }
 
-        if (($manifest->getPayments()?->getPaymentMethods() ?? []) !== []) {
-            $usedFeatures[] = 'Payment Methods';
-        }
-
         if (($manifest->getTax()?->getTaxProviders() ?? []) !== []) {
             $usedFeatures[] = 'Tax providers';
         }

@@ -44,7 +44,6 @@ class CheckoutGatewayRoute extends AbstractCheckoutGatewayRoute
         $paymentCriteria = new Criteria();
         $shippingCriteria = new Criteria();
 
-        $paymentCriteria->addAssociation('appPaymentMethod.app');
         $shippingCriteria->addAssociation('appShippingMethod.app');
 
         // Only load available payment and shipping methods from the routes

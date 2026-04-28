@@ -19,8 +19,6 @@
     "app_action_button_translation.languageId",
     "app_template.createdAt",
     "app_template.updatedAt",
-    "app_payment_method.createdAt",
-    "app_payment_method.updatedAt",
     "app_script_condition.createdAt",
     "app_script_condition.updatedAt",
     "app_script_condition.translated",

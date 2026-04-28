@@ -24,7 +24,6 @@ use Shopware\Core\Content\Product\Aggregate\ProductManufacturer\ProductManufactu
 use Shopware\Core\Content\Product\Aggregate\ProductMedia\ProductMediaCollection;
 use Shopware\Core\Content\Product\ProductCollection;
 use Shopware\Core\Content\Property\Aggregate\PropertyGroupOption\PropertyGroupOptionCollection;
-use Shopware\Core\Framework\App\Aggregate\AppPaymentMethod\AppPaymentMethodCollection;
 use Shopware\Core\Framework\App\Aggregate\AppShippingMethod\AppShippingMethodEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\Entity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
@@ -132,8 +131,6 @@ class MediaEntity extends Entity
     protected ?DocumentCollection $documents = null;
 
     protected ?DocumentCollection $a11yDocuments = null;
-
-    protected ?AppPaymentMethodCollection $appPaymentMethods = null;
 
     /**
      * @var EntityCollection<AppShippingMethodEntity>|null
@@ -593,16 +590,6 @@ class MediaEntity extends Entity
     public function setA11yDocuments(DocumentCollection $a11yDocuments): void
     {
         $this->a11yDocuments = $a11yDocuments;
-    }
-
-    public function getAppPaymentMethods(): ?AppPaymentMethodCollection
-    {
-        return $this->appPaymentMethods;
-    }
-
-    public function setAppPaymentMethods(AppPaymentMethodCollection $appPaymentMethods): void
-    {
-        $this->appPaymentMethods = $appPaymentMethods;
     }
 
     /**

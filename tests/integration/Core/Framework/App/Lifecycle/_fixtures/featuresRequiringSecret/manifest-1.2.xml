@@ -35,11 +35,4 @@
             <process-url>https://tax-provider.app/provide-taxes</process-url>
         </tax-provider>
     </tax>
-    <payments>
-        <payment-method>
-            <identifier>simpleSynchronousPayment</identifier>
-            <name>Simple Synchronous payment</name>
-            <description>Simple Synchronous payment</description>
-        </payment-method>
-    </payments>
 </manifest>

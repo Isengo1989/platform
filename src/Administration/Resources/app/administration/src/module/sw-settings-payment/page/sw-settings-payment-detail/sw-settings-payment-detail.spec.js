@@ -200,20 +200,6 @@ describe('module/sw-settings-payment/page/sw-settings-payment-detail', () => {
         expect(technicalInput.props().disabled).toBe(true);
     });
 
-    it('should disabled technical name input appId', async () => {
-        const wrapper = await createWrapper([], {
-            appPaymentMethod: {
-                id: '001',
-            },
-        });
-
-        await flushPromises();
-
-        const technicalInput = wrapper.findComponent('.sw-settings-payment-detail__field-technical-name');
-
-        expect(technicalInput.props().disabled).toBe(true);
-    });
-
     it('should not disabled technical name input', async () => {
         const wrapper = await createWrapper(['payment.editor'], {
             pluginId: undefined,

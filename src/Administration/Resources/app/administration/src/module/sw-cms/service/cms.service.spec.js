@@ -873,10 +873,6 @@ describe('module/sw-cms/service/cms.service.spec.js', () => {
             [
                 // Only test some values
                 [
-                    'app_payment_method',
-                    ['category.media.appPaymentMethods'],
-                ],
-                [
                     'category',
                     [
                         'category.children',

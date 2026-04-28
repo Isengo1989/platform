@@ -69,10 +69,6 @@ class AddPaymentMethodCommandHandlerTest extends TestCase
                         static::assertSame('technicalName', $filter->getField());
                         static::assertSame('test', $filter->getValue());
 
-                        static::assertTrue($criteria->hasAssociation('appPaymentMethod'));
-                        $assoc = $criteria->getAssociation('appPaymentMethod');
-                        static::assertTrue($assoc->hasAssociation('app'));
-
                         return true;
                     }
                 ),

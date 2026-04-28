@@ -73,22 +73,6 @@
     "createdAt",
     "updatedAt"
   ],
-  "app_payment_method": [
-    "id",
-    "appName",
-    "identifier",
-    "payUrl",
-    "finalizeUrl",
-    "validateUrl",
-    "captureUrl",
-    "refundUrl",
-    "recurringUrl",
-    "appId",
-    "originalMediaId",
-    "paymentMethodId",
-    "createdAt",
-    "updatedAt"
-  ],
   "app_script_condition": [
     "id",
     "identifier",

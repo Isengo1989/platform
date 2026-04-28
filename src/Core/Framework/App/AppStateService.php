@@ -9,7 +9,6 @@ use Shopware\Core\Framework\App\Event\Hooks\AppDeactivatedHook;
 use Shopware\Core\Framework\App\Lifecycle\Persister\FlowEventPersister;
 use Shopware\Core\Framework\App\Lifecycle\Persister\RuleConditionPersister;
 use Shopware\Core\Framework\App\Lifecycle\Persister\ScriptPersister;
-use Shopware\Core\Framework\App\Payment\PaymentMethodStateService;
 use Shopware\Core\Framework\App\Template\TemplateStateService;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
@@ -33,7 +32,6 @@ class AppStateService
         private readonly ActiveAppsLoader $activeAppsLoader,
         private readonly TemplateStateService $templateStateService,
         private readonly ScriptPersister $scriptPersister,
-        private readonly PaymentMethodStateService $paymentMethodStateService,
         private readonly ScriptExecutor $scriptExecutor,
         private readonly RuleConditionPersister $ruleConditionPersister,
         private readonly FlowEventPersister $flowEventPersister
@@ -54,7 +52,6 @@ class AppStateService
         $this->appRepo->update([['id' => $appId, 'active' => true]], $context);
         $this->templateStateService->activateAppTemplates($appId, $context);
         $this->scriptPersister->activateAppScripts($appId, $context);
-        $this->paymentMethodStateService->activatePaymentMethods($appId, $context);
         $this->ruleConditionPersister->activateConditionScripts($appId, $context);
         $this->activeAppsLoader->reset();
         // manually set active flag to true, so we don't need to re-fetch the app from DB
@@ -87,7 +84,6 @@ class AppStateService
         $this->appRepo->update([['id' => $appId, 'active' => false]], $context);
         $this->templateStateService->deactivateAppTemplates($appId, $context);
         $this->scriptPersister->deactivateAppScripts($appId, $context);
-        $this->paymentMethodStateService->deactivatePaymentMethods($appId, $context);
         $this->ruleConditionPersister->deactivateConditionScripts($appId, $context);
         $this->flowEventPersister->deactivateFlow($appId);
         // reset only after new state is in the DB
