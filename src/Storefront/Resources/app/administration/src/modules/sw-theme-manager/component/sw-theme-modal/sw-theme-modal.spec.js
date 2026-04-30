@@ -2,9 +2,7 @@
  * @sw-package discovery
  */
 import { shallowMount } from '@vue/test-utils';
-import swThemeModal from './index';
-
-Shopware.Component.register('sw-theme-modal', swThemeModal);
+import './index';
 
 describe('sw-theme-modal', () => {
     async function createWrapper({ repositorySearch = null, selectedThemeId = null } = {}) {

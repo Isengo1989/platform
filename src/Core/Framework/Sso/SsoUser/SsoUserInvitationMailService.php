@@ -7,7 +7,6 @@ use Shopware\Core\Content\MailTemplate\Aggregate\MailTemplateType\MailTemplateTy
 use Shopware\Core\Content\MailTemplate\Aggregate\MailTemplateType\MailTemplateTypeEntity;
 use Shopware\Core\Content\MailTemplate\MailTemplateCollection;
 use Shopware\Core\Content\MailTemplate\MailTemplateEntity;
-use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Api\Context\AdminApiSource;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
@@ -18,7 +17,6 @@ use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Sso\SsoException;
 use Shopware\Core\Framework\Validation\DataBag\DataBag;
 use Shopware\Core\System\Language\LanguageCollection;
-use Shopware\Core\System\Language\LanguageEntity;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Shopware\Core\System\User\UserCollection;
 use Shopware\Core\System\User\UserEntity;
@@ -87,17 +85,13 @@ class SsoUserInvitationMailService
 
     private function getMailTemplate(string $localeId, Context $context): ?MailTemplateEntity
     {
-        $language = $this->getLanguageForLocale($localeId, $context);
-        if ($language) {
+        $languageId = $this->getLanguageIdForLocale($localeId, $context);
+        if ($languageId) {
             $newContext = new Context(
                 $context->getSource(),
                 $context->getRuleIds(),
                 $context->getCurrencyId(),
-                array_values(array_filter([
-                    $language->getId(),
-                    $language->getParentId(),
-                    Defaults::LANGUAGE_SYSTEM,
-                ])),
+                [$languageId],
                 $context->getVersionId(),
                 $context->getCurrencyFactor(),
                 $context->considerInheritance(),
@@ -156,11 +150,11 @@ class SsoUserInvitationMailService
         return $this->userRepository->search(new Criteria([$userId]), $context)->first();
     }
 
-    private function getLanguageForLocale(string $localeId, Context $context): ?LanguageEntity
+    private function getLanguageIdForLocale(string $localeId, Context $context): ?string
     {
         $criteria = new Criteria();
         $criteria->addFilter(new EqualsFilter('localeId', $localeId));
 
-        return $this->languageRepository->search($criteria, $context)->first();
+        return $this->languageRepository->search($criteria, $context)->first()?->getId();
     }
 }

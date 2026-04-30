@@ -77,7 +77,7 @@ export default class GoogleReCaptchaBasePlugin extends Plugin {
     }
 
     _registerEvents() {
-        this._form.addEventListener('submit', this._onFormSubmitCallback.bind(this), { capture: true });
+        this._form.addEventListener('submit', this._onFormSubmitCallback.bind(this));
     }
 
     _submitInvisibleForm() {
@@ -109,8 +109,6 @@ export default class GoogleReCaptchaBasePlugin extends Plugin {
 
     _onFormSubmitCallback(event) {
         if (this._formSubmitting) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
             return;
         }
 

@@ -16,7 +16,7 @@ describe('sw-theme-manager-list', () => {
         ensureThemeMixinRegistered();
 
         jest.isolateModules(() => {
-            Shopware.Component.register('sw-theme-manager-list', require('./index').default);
+            require('./index');
         });
     });
 

@@ -1,31 +1,31 @@
 import template from './sw-sales-channel-detail-theme.html.twig';
 import './sw-sales-channel-detail-theme.scss';
 
-const { Mixin } = Shopware;
+/**
+ * @package discovery
+ */
+
+const { Component, Mixin } = Shopware;
 const Criteria = Shopware.Data.Criteria;
 
-/**
- * @deprecated tag:v6.8.0 - Will be @private
- * @sw-package discovery
- */
-export default {
+Component.register('sw-sales-channel-detail-theme', {
     template,
 
     mixins: [
         Mixin.getByName('notification'),
-        Mixin.getByName('placeholder'),
+        Mixin.getByName('placeholder')
     ],
 
     inject: [
         'repositoryFactory',
         'themeService',
-        'acl',
+        'acl'
     ],
 
     props: {
         salesChannel: {
-            required: true,
-        },
+            required: true
+        }
     },
 
     data() {
@@ -41,7 +41,7 @@ export default {
     computed: {
         themeRepository() {
             return this.repositoryFactory.create('theme');
-        },
+        }
     },
 
     watch: {
@@ -49,8 +49,8 @@ export default {
             deep: true,
             handler() {
                 this.getTheme(this.salesChannel?.extensions?.themes[0]?.id);
-            },
-        },
+            }
+        }
     },
 
     created() {
@@ -105,4 +105,4 @@ export default {
             this.salesChannel.extensions.themes[0] = this.theme;
         },
     },
-};
+});

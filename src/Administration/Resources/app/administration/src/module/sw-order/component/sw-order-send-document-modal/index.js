@@ -1,32 +1,12 @@
 import template from './sw-order-send-document-modal.html.twig';
 import './sw-order-send-document-modal.scss';
-import { DOCUMENT_TYPES } from '../../order.types';
+
+/**
+ * @sw-package checkout
+ */
 
 const { Filter } = Shopware;
 const { Criteria, EntityCollection } = Shopware.Data;
-
-const DOCUMENT_MAIL_TEMPLATES = {
-    INVOICE: 'invoice_mail',
-    DELIVERY_NOTE: 'delivery_mail',
-    CREDIT_NOTE: 'credit_note_mail',
-    CANCELLATION_INVOICE: 'cancellation_mail',
-};
-
-/**
- * @private
- */
-export const DOCUMENT_MAIL_TEMPLATE_MAPPING = {
-    [DOCUMENT_TYPES.INVOICE]: DOCUMENT_MAIL_TEMPLATES.INVOICE,
-    [DOCUMENT_TYPES.ZUGFERD_INVOICE]: DOCUMENT_MAIL_TEMPLATES.INVOICE,
-    [DOCUMENT_TYPES.ZUGFERD_EMBEDDED_INVOICE]: DOCUMENT_MAIL_TEMPLATES.INVOICE,
-    [DOCUMENT_TYPES.DELIVERY_NOTE]: DOCUMENT_MAIL_TEMPLATES.DELIVERY_NOTE,
-    [DOCUMENT_TYPES.CREDIT_NOTE]: DOCUMENT_MAIL_TEMPLATES.CREDIT_NOTE,
-    [DOCUMENT_TYPES.ZUGFERD_CREDIT_NOTE]: DOCUMENT_MAIL_TEMPLATES.CREDIT_NOTE,
-    [DOCUMENT_TYPES.ZUGFERD_EMBEDDED_CREDIT_NOTE]: DOCUMENT_MAIL_TEMPLATES.CREDIT_NOTE,
-    [DOCUMENT_TYPES.CANCELLATION_INVOICE]: DOCUMENT_MAIL_TEMPLATES.CANCELLATION_INVOICE,
-    [DOCUMENT_TYPES.ZUGFERD_CANCELLATION_INVOICE]: DOCUMENT_MAIL_TEMPLATES.CANCELLATION_INVOICE,
-    [DOCUMENT_TYPES.ZUGFERD_EMBEDDED_CANCELLATION_INVOICE]: DOCUMENT_MAIL_TEMPLATES.CANCELLATION_INVOICE,
-};
 
 /**
  * @sw-package checkout
@@ -80,6 +60,7 @@ export default {
             return this.repositoryFactory.create('mail_template');
         },
 
+        /** @deprecated tag:v6.8.0 - Method will be removed */
         mailHeaderFooterRepository() {
             return this.repositoryFactory.create('mail_header_footer');
         },
@@ -119,96 +100,92 @@ export default {
         },
     },
 
-    async created() {
-        await this.createdComponent();
+    created() {
+        this.createdComponent();
     },
 
     methods: {
-        async createdComponent() {
+        createdComponent() {
             this.recipient = this.order.orderCustomer.email;
 
-            await this.setEmailTemplateAccordingToDocumentType();
+            this.setEmailTemplateAccordingToDocumentType();
 
             this.loadTheLinksForA11y();
         },
 
-        async setEmailTemplateAccordingToDocumentType() {
-            const type = this.document.documentType.technicalName;
-
-            if (!(type in DOCUMENT_MAIL_TEMPLATE_MAPPING)) {
-                return;
-            }
-
-            const template = DOCUMENT_MAIL_TEMPLATE_MAPPING[type];
-
-            const criteria = new Criteria(1, 1)
-                .addAssociation('mailTemplateType')
-                .addFilter(Criteria.equals('mailTemplateType.technicalName', template));
-
-            const context = {
-                ...Shopware.Context.api,
-                languageId: this.order.languageId,
+        setEmailTemplateAccordingToDocumentType() {
+            const documentMailTemplateMapping = {
+                invoice: 'invoice_mail',
+                credit_note: 'credit_note_mail',
+                delivery_note: 'delivery_mail',
+                storno: 'cancellation_mail',
             };
 
-            const result = await this.mailTemplateRepository.search(criteria, context);
-
-            if (result?.length !== 1) {
+            if (!documentMailTemplateMapping.hasOwnProperty(this.document.documentType.technicalName)) {
                 return;
             }
 
-            const mailTemplate = result.first();
-            this.mailTemplateId = mailTemplate.id;
+            this.mailTemplateRepository
+                .search(this.mailTemplateCriteria, { ...Shopware.Context.api, languageId: this.order.languageId })
+                .then((result) => {
+                    const mailTemplate = result
+                        .filter(
+                            (t) =>
+                                t.mailTemplateType.technicalName ===
+                                documentMailTemplateMapping[this.document.documentType.technicalName],
+                        )
+                        .first();
 
-            await this.onMailTemplateChange(mailTemplate.id, mailTemplate);
+                    if (!mailTemplate) {
+                        return;
+                    }
+
+                    this.mailTemplateId = mailTemplate.id;
+                    this.onMailTemplateChange(mailTemplate.id, mailTemplate);
+                });
         },
 
-        async onMailTemplateChange(mailTemplateId, mailTemplate) {
+        onMailTemplateChange(mailTemplateId, mailTemplate) {
             if (mailTemplateId === null) {
                 this.subject = '';
                 this.content = '';
 
-                return;
+                return Promise.resolve();
             }
 
             const localMailTemplate = { ...mailTemplate };
-
             if (localMailTemplate?.mailTemplateType?.templateData?.order && this?.order) {
                 localMailTemplate.mailTemplateType.templateData.order = this.order;
             }
 
+            const apiContext = {
+                ...Shopware.Context.api,
+                languageId: this.order.languageId || Shopware.Context.api.languageId,
+            };
+
             this.subject = localMailTemplate.subject;
 
-            if (!this.order.salesChannel || !this.order.salesChannel.mailHeaderFooterId) {
-                this.content = await this.mailService.buildRenderPreview(
-                    localMailTemplate.mailTemplateType,
-                    localMailTemplate,
-                );
-
-                return;
-            }
-
-            const mailTemplateWithHeaderFooter = { ...localMailTemplate };
-
-            const mailHeaderFooter = await this.mailHeaderFooterRepository.search(
-                new Criteria(1, 1).addFilter(Criteria.equals('id', this.order.salesChannel.mailHeaderFooterId)),
-            );
-
-            if (mailHeaderFooter[0]?.headerHtml) {
-                mailTemplateWithHeaderFooter.contentHtml =
-                    mailHeaderFooter[0].headerHtml + mailTemplateWithHeaderFooter.contentHtml;
-            }
-
-            if (mailHeaderFooter[0]?.footerHtml) {
-                mailTemplateWithHeaderFooter.contentHtml += mailHeaderFooter[0].footerHtml;
-            }
-
-            this.content = await this.mailService.buildRenderPreview(
-                mailTemplateWithHeaderFooter.mailTemplateType,
-                mailTemplateWithHeaderFooter,
-            );
+            return this.mailService
+                .previewMailTemplate(
+                    localMailTemplate.id,
+                    {
+                        order: this.order.id,
+                        salesChannel: this.order.salesChannelId,
+                    },
+                    {
+                        a11yDocuments: this.a11yDocuments,
+                    },
+                    this.order.salesChannelId,
+                    true,
+                    false,
+                    apiContext,
+                )
+                .then((preview) => {
+                    this.content = preview?.contentHtml?.content ?? '';
+                });
         },
 
-        async onSendDocument() {
+        onSendDocument() {
             this.isLoading = true;
 
             const apiContext = {
@@ -216,56 +193,55 @@ export default {
                 languageId: this.order.languageId || Shopware.Context.api.languageId,
             };
 
-            const mailTemplate = await this.mailTemplateRepository.get(
-                this.mailTemplateId,
-                apiContext,
-                this.mailTemplateSendCriteria,
-            );
+            this.mailTemplateRepository
+                .get(this.mailTemplateId, apiContext, this.mailTemplateSendCriteria)
+                .then((mailTemplate) => {
+                    const mediaCollection = new EntityCollection('/media', 'media', Shopware.Context.api);
 
-            const mediaCollection = new EntityCollection('/media', 'media', Shopware.Context.api);
+                    mailTemplate.media.forEach((mediaAssoc) => {
+                        if (mediaAssoc.languageId === Shopware.Context.api.languageId) {
+                            mediaCollection.push(mediaAssoc.media);
+                        }
+                    });
 
-            mailTemplate.media.forEach((mediaAssoc) => {
-                if (mediaAssoc.languageId === Shopware.Context.api.languageId) {
-                    mediaCollection.push(mediaAssoc.media);
-                }
-            });
-
-            try {
-                await this.mailService.sendMailTemplate(
-                    this.recipient,
-                    `${this.order.orderCustomer.firstName} ${this.order.orderCustomer.lastName}`,
-                    {
-                        ...mailTemplate,
-                        ...{
-                            subject: this.subject,
-                            recipient: this.recipient,
-                        },
-                    },
-                    mediaCollection,
-                    this.order.salesChannelId,
-                    false,
-                    [this.document.id],
-                    {
-                        order: this.order,
-                        salesChannel: this.order.salesChannel,
-                        document: this.document,
-                        a11yDocuments: this.a11yDocuments,
-                    },
-                    null,
-                    null,
-                    apiContext,
-                );
-            } catch {
-                this.createNotificationError({
-                    message: this.$t('sw-order.documentSendModal.errorMessage'),
+                    this.mailService
+                        .getDataAndSendMailTemplate(
+                            {
+                                recipients: {
+                                    [this.recipient]:
+                                        `${this.order.orderCustomer.firstName} ${this.order.orderCustomer.lastName}`,
+                                },
+                                salesChannelId: this.order.salesChannelId,
+                                mediaIds: Array.from(mediaCollection.getIds()),
+                                subject: this.subject,
+                                senderMail: mailTemplate.senderMail,
+                                senderName: mailTemplate.senderName ?? mailTemplate.translated?.senderName,
+                                documentIds: [this.document.id],
+                                testMode: false,
+                                mailTemplateId: mailTemplate.id,
+                                entities: {
+                                    order: this.order.id,
+                                    salesChannel: this.order.salesChannelId,
+                                },
+                                templateData: {
+                                    a11yDocuments: this.a11yDocuments,
+                                },
+                            },
+                            apiContext,
+                        )
+                        .then(() => {
+                            this.$emit('document-sent');
+                        })
+                        .catch(() => {
+                            this.createNotificationError({
+                                message: this.$t('sw-order.documentSendModal.errorMessage'),
+                            });
+                            this.$emit('modal-close');
+                        })
+                        .finally(() => {
+                            this.isLoading = false;
+                        });
                 });
-
-                this.$emit('modal-close');
-            } finally {
-                this.isLoading = false;
-            }
-
-            this.$emit('document-sent');
         },
 
         loadTheLinksForA11y() {

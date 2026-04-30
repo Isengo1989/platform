@@ -1,22 +1,20 @@
 import template from './sw-theme-modal.html.twig';
 import './sw-theme-modal.scss';
 
-const { Mixin } = Shopware;
+/**
+ * @package discovery
+ */
+
+const { Component, Mixin } = Shopware;
 const Criteria = Shopware.Data.Criteria;
 
-/**
- * @deprecated tag:v6.8.0 - Will be @private
- * @sw-package discovery
- */
-export default {
+Component.register('sw-theme-modal', {
     template,
 
     inject: ['repositoryFactory'],
 
-    emits: ['modal-theme-select', 'modal-close'],
-
     mixins: [
-        Mixin.getByName('listing'),
+        Mixin.getByName('listing')
     ],
 
     props: {
@@ -35,14 +33,14 @@ export default {
             sortDirection: 'DESC',
             term: '',
             total: null,
-            themes: [],
+            themes: []
         };
     },
 
     computed: {
         themeRepository() {
             return this.repositoryFactory.create('theme');
-        },
+        }
     },
 
     created() {
@@ -98,6 +96,6 @@ export default {
             this.$emit('modal-close');
             this.selected = null;
             this.term = null;
-        },
-    },
-};
+        }
+    }
+});

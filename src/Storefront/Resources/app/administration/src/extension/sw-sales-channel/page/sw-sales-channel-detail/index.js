@@ -3,7 +3,7 @@ import template from './sw-sales-channel-detail.html.twig';
 const { Component } = Shopware;
 
 /**
- * @sw-package discovery
+ * @package discovery
  */
 Component.override('sw-sales-channel-detail', {
     template,

@@ -1,5 +1,5 @@
 /**
- * @sw-package discovery
+ * @package discovery
  */
 
 const { Mixin } = Shopware;

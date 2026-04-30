@@ -93,7 +93,6 @@ class InfoControllerTest extends TestCase
             'bundles' => [],
             'settings' => [
                 'enableUrlFeature' => true,
-                'presignedUploadSupported' => false,
                 'appUrlReachable' => true,
                 'appsRequireAppUrl' => false,
                 'firstMigrationDate' => null,
@@ -447,7 +446,6 @@ class InfoControllerTest extends TestCase
             static::getContainer()->get(ShopIdProvider::class),
             $this->createMock(StatsService::class),
             new EventDispatcher(),
-            null,
         );
 
         $infoController->setContainer($this->createMock(Container::class));
@@ -524,7 +522,6 @@ class InfoControllerTest extends TestCase
             static::getContainer()->get(ShopIdProvider::class),
             $this->createMock(StatsService::class),
             new EventDispatcher(),
-            null,
         );
 
         $infoController->setContainer($this->createMock(Container::class));
