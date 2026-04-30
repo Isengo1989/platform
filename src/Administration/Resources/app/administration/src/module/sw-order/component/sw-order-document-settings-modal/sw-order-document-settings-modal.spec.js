@@ -64,11 +64,6 @@ async function createWrapper() {
                 },
                 provide: {
                     fileValidationService: new FileValidationService(),
-                    mediaPresignedUploadService: {
-                        prepareUpload: jest.fn(),
-                        uploadToPresignedUrl: jest.fn(),
-                        finalizeUpload: jest.fn(),
-                    },
                     numberRangeService: {
                         reserve: () => Promise.resolve({ number: 1000 }),
                     },
