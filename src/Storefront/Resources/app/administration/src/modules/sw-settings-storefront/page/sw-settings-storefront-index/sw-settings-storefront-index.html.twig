@@ -40,17 +40,19 @@
             <sw-skeleton v-if="isLoading" />
 
             {% block sw_settings_storefront %}
-            <mt-card
+            <sw-card
                 position-identifier="sw-settings-storefront--settings"
                 :title="$t('sw-settings-storefront.configuration.cardTitle')"
                 class="sw-settings-storefront__input-fields"
             >
 
                 {% block sw_settings_storefront_smtp_settings %}
-                <sw-settings-storefront-configuration :storefront-settings="storefrontSettings"/>
+                    <sw-settings-storefront-configuration
+                        :storefront-settings="storefrontSettings"
+                    />
                 {% endblock %}
 
-            </mt-card>
+            </sw-card>
             {% endblock %}
         </sw-card-view>
     </template>

@@ -1,14 +1,14 @@
 import template from './sw-theme-manager-list.html.twig';
 import './sw-theme-manager-list.scss';
 
-const { Mixin } = Shopware;
+/**
+ * @package discovery
+ */
+
+const { Component, Mixin } = Shopware;
 const Criteria = Shopware.Data.Criteria;
 
-/**
- * @deprecated tag:v6.8.0 - Will be @private
- * @sw-package discovery
- */
-export default {
+Component.register('sw-theme-manager-list', {
     template,
 
     inject: ['acl'],
@@ -16,7 +16,7 @@ export default {
     mixins: [
         Mixin.getByName('notification'),
         Mixin.getByName('listing'),
-        Mixin.getByName('theme'),
+        Mixin.getByName('theme')
     ],
 
     data() {
@@ -30,13 +30,13 @@ export default {
             sortBy: 'createdAt',
             sortDirection: 'DESC',
             limit: 9,
-            term: null,
+            term: null
         };
     },
 
     metaInfo() {
         return {
-            title: this.$createTitle(this.identifier),
+            title: this.$createTitle(this.identifier)
         };
     },
 
@@ -54,7 +54,7 @@ export default {
                 { value: 'createdAt:DESC', label: this.$t('sw-theme-manager.sorting.labelSortByCreatedDsc') },
                 { value: 'createdAt:ASC', label: this.$t('sw-theme-manager.sorting.labelSortByCreatedAsc') },
                 { value: 'updatedAt:DESC', label: this.$t('sw-theme-manager.sorting.labelSortByUpdatedDsc') },
-                { value: 'updatedAt:ASC', label: this.$t('sw-theme-manager.sorting.labelSortByUpdatedAsc') },
+                { value: 'updatedAt:ASC', label: this.$t('sw-theme-manager.sorting.labelSortByUpdatedAsc') }
             ];
         },
 
@@ -65,7 +65,7 @@ export default {
         lockToolTip() {
             return {
                 showDelay: 100,
-                message: this.$t('sw-theme-manager.general.lockedToolTip'),
+                message: this.$t('sw-theme-manager.general.lockedToolTip')
             };
         },
 
@@ -111,7 +111,7 @@ export default {
                 limit: this.limit,
                 term: this.term,
                 sortBy: this.sortBy,
-                sortDirection: this.sortDirection,
+                sortDirection: this.sortDirection
             });
 
             this.getList();
@@ -144,7 +144,7 @@ export default {
             this.getList();
             this.updateRoute({
                 page: this.page,
-                limit: this.limit,
+                limit: this.limit
             });
         },
 
@@ -198,7 +198,7 @@ export default {
             return [{
                 property: 'name',
                 label: this.$t('sw-theme-manager.list.gridHeaderName'),
-                primary: true,
+                primary: true
             },
             {
                 property: 'salesChannels.length',
@@ -207,7 +207,7 @@ export default {
             },
             {
                 property: 'createdAt',
-                label: this.$t('sw-theme-manager.list.gridHeaderCreated'),
+                label: this.$t('sw-theme-manager.list.gridHeaderCreated')
             }];
         },
 
@@ -215,8 +215,8 @@ export default {
             return {
                 showDelay: 300,
                 message: this.$t('sw-theme-manager.actions.deleteDisabledToolTip'),
-                disabled: theme.salesChannels.length === 0,
+                disabled: theme.salesChannels.length === 0
             };
-        },
-    },
-};
+        }
+    }
+});

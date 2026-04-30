@@ -2,9 +2,7 @@
  * @sw-package discovery
  */
 import { shallowMount } from '@vue/test-utils';
-import swSalesChannelDetailTheme from './index';
-
-Shopware.Component.register('sw-sales-channel-detail-theme', swSalesChannelDetailTheme);
+import './index';
 
 describe('sw-sales-channel-detail-theme', () => {
     async function createWrapper({ aclCan = true, salesChannel = null, themeRepositoryGet = null } = {}) {

@@ -3,7 +3,6 @@
 namespace Shopware\Core\Checkout\Document;
 
 use Shopware\Core\Checkout\Document\Aggregate\DocumentType\DocumentTypeEntity;
-use Shopware\Core\Checkout\DocumentV2\Aggregate\DocumentFile\DocumentFileCollection;
 use Shopware\Core\Checkout\Order\OrderEntity;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\Entity;
@@ -53,11 +52,6 @@ class DocumentEntity extends Entity
     protected ?string $documentA11yMediaFileId = null;
 
     protected ?MediaEntity $documentA11yMediaFile = null;
-
-    /**
-     * @internal
-     */
-    protected ?DocumentFileCollection $documentFiles = null;
 
     public function getOrder(): ?OrderEntity
     {
@@ -233,21 +227,5 @@ class DocumentEntity extends Entity
     public function setDocumentA11yMediaFile(?MediaEntity $mediaEntity): void
     {
         $this->documentA11yMediaFile = $mediaEntity;
-    }
-
-    /**
-     * @internal
-     */
-    public function getDocumentFiles(): ?DocumentFileCollection
-    {
-        return $this->documentFiles;
-    }
-
-    /**
-     * @internal
-     */
-    public function setDocumentFiles(DocumentFileCollection $documentFiles): void
-    {
-        $this->documentFiles = $documentFiles;
     }
 }

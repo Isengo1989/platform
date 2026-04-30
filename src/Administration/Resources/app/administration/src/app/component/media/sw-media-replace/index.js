@@ -11,8 +11,6 @@
  *      variant="regular"
  * ></sw-media-replace>
  */
-const { fileReader } = Shopware.Utils;
-
 // eslint-disable-next-line sw-deprecation-rules/private-feature-declarations
 export default {
     props: {
@@ -35,18 +33,6 @@ export default {
 
         cleanUpFailure(mediaEntity, message) {
             this.createNotificationError({ message });
-        },
-
-        handlePresignedUpload(files) {
-            const { extension } = fileReader.getNameAndExtensionFromFile(files[0]);
-
-            this.mediaService.getListenerForTag(this.uploadTag).forEach((listener) => {
-                listener(
-                    this.mediaService._createUploadEvent('media-upload-add', this.uploadTag, {
-                        data: [{ targetId: this.itemToReplace.id, extension, src: files[0] }],
-                    }),
-                );
-            });
         },
     },
 };

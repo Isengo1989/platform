@@ -113,10 +113,10 @@ export default {
             await this.mediaService.runUploads(this.uploadTag);
         },
 
-        onUploadFinished({ targetId, originalTargetId } = {}) {
-            if (targetId || originalTargetId) {
+        onUploadFinished({ targetId } = {}) {
+            if (targetId) {
                 this.uploads = this.uploads.filter((upload) => {
-                    return upload.id !== targetId && upload.id !== originalTargetId;
+                    return upload.id !== targetId;
                 });
             }
 

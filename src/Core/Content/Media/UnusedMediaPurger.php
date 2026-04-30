@@ -11,7 +11,6 @@ use Shopware\Core\Framework\DataAbstractionLayer\Dbal\Common\RepositoryIterator;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\AssociationField;
-use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\IgnoreInUnusedMediaSearch;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\ManyToManyAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToManyAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToOneAssociationField;
@@ -242,10 +241,6 @@ class UnusedMediaPurger
             }
 
             if (!\in_array($field::class, self::VALID_ASSOCIATIONS, true)) {
-                continue;
-            }
-
-            if ($field->is(IgnoreInUnusedMediaSearch::class)) {
                 continue;
             }
 

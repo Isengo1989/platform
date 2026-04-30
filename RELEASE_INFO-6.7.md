@@ -4,28 +4,40 @@
 
 ## API
 
+### Mail template preview and send routes support richer rendering context
+
+The mail template Admin API now exposes dedicated preview and send routes:
+
+- `/api/_action/mail-template/simulate`
+- `/api/_action/mail-template/preview`
+- `/api/_action/mail-template/get-data-and-send`
+- `/api/_action/mail-template/available-variables`
+
+The preview routes support sales-channel-aware rendering.
+`/api/_action/mail-template/preview` accepts `salesChannelId`, `includeHeaderFooter`, and `strictRendering`, and `/api/_action/mail-template/simulate` accepts `salesChannelId` and `strictRendering`.
+This allows Administration extensions and custom tooling to preview the final mail output, including sales-channel-specific headers and footers, against the same rendering context used for sending.
+
+`/api/_action/mail-template/get-data-and-send` lets callers resolve a persisted mail template together with entity-based template data before sending.
+`/api/_action/mail-template/available-variables` exposes the variable tree for a business event so extensions can build mail-template editing and preview tooling without hardcoding the available data shape.
+
+The `/api/_action/mail-template/send` payload now also has a first-class `extensions` bag for custom mail data.
+Arbitrary unknown top-level keys are still forwarded for backwards compatibility in 6.7, but they are deprecated and will stop being forwarded in Shopware 6.8.
+
 ## Core
 
 ### Backward compatible invalid locales
 
 Added and deprecated `BackwardCompatibleNumberFormatter` to temporarily allow invalid locale strings without throwing exceptions in PHP >=8.4. It will be removed in Shopware 6.8.
 
-### Configurable order deep link expiry
-
-The number of days an order can be accessed via deep link is now configurable via `shopware.yaml`:
-
-    shopware:
-      order:
-        deep_link:
-          expire_days: 30
-
-### Technical media associations can be ignored by `media:delete-unused`
-
-Plugins can now mark technical `media` associations with the new DAL flag `IgnoreInUnusedMediaSearch`.
-This prevents `media:delete-unused` from treating metadata-only extensions as real media usage and helps avoid false negatives when removing unused files.
-Third-party developers should add this flag to media associations that store technical metadata but do not represent an actual assignment of the media file.
-
 ## Administration
+
+### Mail template preview is now sales-channel-aware and uses isolated HTML rendering
+
+The mail template detail page can now preview mails with the selected sales channel and its configured mail header and footer.
+This helps developers and merchants validate the final rendered output more accurately, especially for document mails and installations with channel-specific branding.
+
+The HTML preview is now rendered in a sandboxed iframe instead of being injected directly into the Administration DOM.
+This keeps the preview close to the actual mail output while reducing the risk of script execution from rendered template content.
 
 ### Fixed "Last Quarter" timeframe returning the wrong year in `sw-date-filter`
 
@@ -36,12 +48,6 @@ The end boundary is now derived from the quarter's start year rather than the cu
 
 When the sidebar is collapsed, hovering a menu entry near the bottom of the sidebar could cause the flyout submenu to extend beyond the viewport, making lower entries inaccessible.
 The flyout now calculates a dynamic `max-height` from the remaining viewport space and scrolls vertically when its content exceeds that limit.
-
-### Meteor Component Library updated to 4.28.6
-
-The Administration now uses Meteor Component Library `4.28.6`.
-With this update, disabled Meteor switch fields in system configuration can now unlink inherited sales channel values.
-Previously, the switch field itself was disabled as expected, but its inheritance control was disabled as well, preventing merchants from overriding inherited values for that sales channel.
 
 ## Storefront
 
@@ -113,6 +119,15 @@ Product exports now support `ProductExportEntity::FILE_FORMAT_JSONL` as a third 
 ### [Experimental] Agentic Commerce product export provider abstraction
 
 The new `AbstractAgenticCommerceProductExportProvider` can be used to implement custom Agentic Commerce export providers.
+
+### Configurable order deep link expiry
+
+The number of days an order can be accessed via deep link is now configurable via `shopware.yaml`:
+
+    shopware:
+      order:
+        deep_link:
+          expire_days: 30
 
 ## Administration
 

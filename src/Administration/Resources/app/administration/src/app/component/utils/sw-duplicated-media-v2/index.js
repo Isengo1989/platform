@@ -20,7 +20,6 @@ export default {
     inject: [
         'repositoryFactory',
         'mediaService',
-        'mediaPresignedUploadService',
     ],
 
     data() {
@@ -37,9 +36,6 @@ export default {
     },
 
     computed: {
-        presignedSupported() {
-            return Shopware.Store.get('context').app.config?.settings?.presignedUploadSupported ?? false;
-        },
         mediaRepository() {
             return this.repositoryFactory.create('media');
         },
@@ -221,7 +217,7 @@ export default {
             this.suggestedName = provided.fileName;
         },
 
-        async solveDuplicate() {
+        solveDuplicate() {
             if (!this.currentTask) {
                 this.isLoading = false;
                 return;
@@ -231,17 +227,17 @@ export default {
 
             switch (this.selectedOption) {
                 case 'Rename':
-                    await this.renameFile(this.currentTask);
+                    this.renameFile(this.currentTask);
                     break;
                 case 'Replace':
-                    await this.replaceFile(this.currentTask);
+                    this.replaceFile(this.currentTask);
                     break;
                 case 'Keep':
-                    await this.keepFile(this.currentTask);
+                    this.keepFile(this.currentTask);
                     break;
                 case 'Skip':
                 default:
-                    await this.skipFile(this.currentTask);
+                    this.skipFile(this.currentTask);
                     break;
             }
 
@@ -250,7 +246,7 @@ export default {
             if (!this.currentTask || !this.isWorkingOnMultipleTasks) {
                 this.isLoading = false;
             } else {
-                await this.solveDuplicate();
+                this.solveDuplicate();
             }
         },
 
@@ -260,32 +256,26 @@ export default {
             const { fileName } = await this.mediaService.provideName(uploadTask.fileName, uploadTask.extension);
             newTask.fileName = fileName;
 
-            if (this.presignedSupported && uploadTask.src instanceof File) {
-                const mediaId = await this.presignedUpload(newTask, newTask.targetId);
-                this.emitUploadFinished(newTask.uploadTag, mediaId);
-                return;
-            }
-
             this.mediaService.addUpload(newTask.uploadTag, newTask);
             await this.mediaService.runUploads(newTask.uploadTag);
         },
 
-        async skipAll() {
+        skipAll() {
             this.isLoading = true;
 
-            await this.skipFile(this.currentTask);
+            this.skipFile(this.currentTask);
             this.failedUploadTasks.splice(0, 1);
 
             if (!this.currentTask) {
                 this.isLoading = false;
             } else {
-                await this.skipAll();
+                this.skipAll();
             }
         },
 
-        async skipCurrentFile() {
+        skipCurrentFile() {
             this.isLoading = true;
-            await this.skipFile(this.currentTask);
+            this.skipFile(this.currentTask);
 
             this.failedUploadTasks.splice(0, 1);
             this.isLoading = false;
@@ -312,29 +302,6 @@ export default {
             const searchResult = await this.mediaRepository.search(criteria, Context.api);
             const newTarget = searchResult[0];
             const oldTargetId = uploadTask.targetId;
-
-            if (this.presignedSupported && uploadTask.src instanceof File) {
-                try {
-                    const mediaId = await this.presignedUpload(uploadTask, newTarget.id);
-
-                    const oldTarget = await this.mediaRepository.get(oldTargetId, Context.api);
-                    if (oldTarget && !oldTarget.hasFile) {
-                        await this.mediaRepository.delete(oldTargetId, Context.api);
-                    }
-
-                    this.emitUploadFinished(uploadTask.uploadTag, mediaId, mediaId !== oldTargetId ? oldTargetId : null);
-                } catch (e) {
-                    const oldTarget = await this.mediaRepository.get(oldTargetId, Context.api);
-                    if (oldTarget && !oldTarget.hasFile) {
-                        await this.mediaRepository.delete(oldTargetId, Context.api);
-                    }
-
-                    throw e;
-                }
-
-                return;
-            }
-
             uploadTask.targetId = newTarget.id;
 
             this.mediaService.addUpload(uploadTask.uploadTag, uploadTask);
@@ -347,50 +314,6 @@ export default {
             }
 
             await this.mediaRepository.get(uploadTask.targetId, Context.api);
-        },
-
-        async presignedUpload(uploadTask, mediaId) {
-            const mimeType = uploadTask.src.type || 'application/octet-stream';
-
-            const [
-                result,
-                dimensions,
-            ] = await Promise.all([
-                this.mediaPresignedUploadService.prepareUpload({
-                    fileName: uploadTask.fileName,
-                    extension: uploadTask.extension,
-                    mimeType,
-                    mediaId,
-                }),
-                this.mediaPresignedUploadService.getImageDimensions(uploadTask.src),
-            ]);
-
-            await this.mediaPresignedUploadService.uploadToPresignedUrl(result.url, uploadTask.src, mimeType);
-
-            await this.mediaPresignedUploadService.finalizeUpload(result.mediaId, {
-                fileName: uploadTask.fileName,
-                extension: uploadTask.extension,
-                mimeType,
-                path: result.path,
-                width: dimensions?.width ?? null,
-                height: dimensions?.height ?? null,
-            });
-
-            return result.mediaId;
-        },
-
-        emitUploadFinished(uploadTag, targetId, originalTargetId = null) {
-            this.mediaService.getListenerForTag(uploadTag).forEach((listener) => {
-                listener(
-                    this.mediaService._createUploadEvent('media-upload-finish', uploadTag, {
-                        targetId,
-                        originalTargetId,
-                        successAmount: 1,
-                        failureAmount: 0,
-                        totalAmount: 1,
-                    }),
-                );
-            });
         },
 
         async keepFile(uploadTask) {

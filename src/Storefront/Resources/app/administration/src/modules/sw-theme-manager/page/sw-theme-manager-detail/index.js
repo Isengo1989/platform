@@ -1,16 +1,16 @@
 import template from './sw-theme-manager-detail.html.twig';
 import './sw-theme-manager-detail.scss';
 
-const { Mixin } = Shopware;
+/**
+ * @package discovery
+ */
+
+const { Component, Mixin } = Shopware;
 const Criteria = Shopware.Data.Criteria;
 const { getObjectDiff, cloneDeep, deepMergeObject } = Shopware.Utils.object;
 const { isArray } = Shopware.Utils.types;
 
-/**
- * @deprecated tag:v6.8.0 - Will be @private
- * @sw-package discovery
- */
-export default {
+Component.register('sw-theme-manager-detail', {
     template,
 
     inject: ['acl', 'feature'],
@@ -319,10 +319,7 @@ export default {
             this.currentThemeConfigInitial[field].value = false;
         },
 
-        /**
-         * @deprecated tag:v6.8.0 - Will be removed without replacement
-         */
-        restoreMediaInheritance(currentValue) {
+        restoreMediaInheritance(currentValue, value) {
             return currentValue;
         },
 
@@ -840,6 +837,6 @@ export default {
             }
 
             this.onAddMediaToTheme(items[0], this.currentThemeConfig[this.activeMediaField]);
-        },
-    },
-};
+        }
+    }
+});

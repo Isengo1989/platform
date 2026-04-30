@@ -2,10 +2,9 @@ import template from './sw-settings-storefront-index.html.twig';
 import './sw-settings-storefront-index.scss';
 
 /**
- * @deprecated tag:v6.8.0 - Will be @private
  * @sw-package framework
  */
-export default {
+Shopware.Component.register('sw-settings-storefront-index', {
     template,
 
     inject: ['systemConfigApiService'],
@@ -17,7 +16,7 @@ export default {
             storefrontSettings: {
                 'core.storefrontSettings.iconCache': true,
                 'core.storefrontSettings.asyncThemeCompilation': false,
-                'core.storefrontSettings.speculationRules': false,
+                'core.storefrontSettings.speculationRules': false
             },
         };
     },
@@ -50,7 +49,7 @@ export default {
                 this.storefrontSettings = {
                     'core.storefrontSettings.iconCache': true,
                     'core.storefrontSettings.asyncThemeCompilation': false,
-                    'core.storefrontSettings.speculationRules': false,
+                    'core.storefrontSettings.speculationRules': false
                 };
             }
 
@@ -81,4 +80,4 @@ export default {
             await this.loadPageContent();
         },
     },
-};
+});
